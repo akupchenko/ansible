@@ -1,0 +1,19 @@
+ ! Configuration File for keepalived
+global_defs {
+}
+vrrp_script chk_service {
+}
+vrrp_instance VI_1 {
+    state BACKUP
+    interface {{ ansible_default_ipv4.interface }}
+    virtual_router_id 88
+    priority 100
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass qazsewsxdr
+    }
+    virtual_ipaddress {
+        {{ keepalived_shared_ip }} dev {{ ansible_default_ipv4.interface }}
+    }
+}

@@ -1,0 +1,18 @@
+- hosts: all
+  remote_user: akupchenko
+  become: yes
+  tasks:
+    - name: Install keepalived (Centos)
+      yum: name=epel-release state=present
+      when: ansible_os_family == "RedHat"
+      tags: keepalived
+
+    - name: Install keepalived (Centos)
+      yum: name=nginx state=present
+      when: ansible_os_family == "RedHat"
+      tags: keepalived
+
+    - name: Install keepalived (debian/ubuntu)
+      apt: name=nginx state=latest
+      when: ansible_os_family == "Debian"
+      tags: keepalived

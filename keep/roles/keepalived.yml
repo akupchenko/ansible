@@ -1,0 +1,9 @@
+    - hosts: s1
+      roles:
+         - { role: keepalived, keepalived_shared_ip: "192.168.56.110", keepalived_role: "master" }
+
+    - hosts: s2
+      roles:
+         - { role: keepalived, keepalived_shared_ip: "192.168.56.110", keepalived_role: "slave" }
+
+

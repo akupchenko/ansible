@@ -1,0 +1,19 @@
+global
+    daemon
+    maxconn 256
+
+defaults
+    mode tcp
+    timeout connect 5000ms
+    timeout client 50000ms
+    timeout server 50000ms
+
+listen cluster
+    bind {{ keepalived_shared_ip }}:23
+    tcp-check expect string SSH-2.0-
+    mode tcp
+    stats enable
+    balance roundrobin
+{% for backend in groups['test'] %}
+    server {{ hostvars[backend]['ansible_hostname'] }} {{ hostvars[backend]['ansible_ssh_host'] }} check port 22
+{% endfor %}

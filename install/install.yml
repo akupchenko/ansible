@@ -1,0 +1,40 @@
+- hosts: all
+  remote_user: akupchenko
+  become: yes
+  tasks:
+    - name: Install keepalived (Centos)
+      yum: name=keepalived state=present
+      when: ansible_os_family == "RedHat"
+      tags: keepalived
+
+    - name: Install keepalived (debian/ubuntu)
+      apt: name=keepalived state=latest
+      when: ansible_os_family == "Debian"
+      tags: keepalived
+
+    - name: Install HAProxy (Centos)
+      yum: name=haproxy state=present
+      when: ansible_os_family == "RedHat"
+      tags: keepalived
+
+    - name: Install HAProxy (debian/ubuntu)
+      apt: name=haproxy state=latest
+      when: ansible_os_family == "Debian"
+      tags: keepalived
+
+    - name: Upload configuration keepalived
+      template: src=keepalived.conf.j2 dest=/etc/keepalived/keepalived.conf
+      tags: keepalived
+
+    - name: Upload configuration HAProxy
+      template: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
+      tags: keepalived
+
+    - name: Start HAProxy
+      service: name=haproxy state=restarted
+      tags: keepalived
+
+
+    - name: Start keepalived
+      service: name=keepalived state=restarted
+      tags: keepalived
