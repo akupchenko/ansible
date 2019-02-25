@@ -1,0 +1,28 @@
+- hosts: all
+  remote_user: akupchenko
+  become: yes
+  tasks:
+    - sysctl:
+        name: net.ipv4.ip_nonlocal_bind
+        value: 1
+        sysctl_set: yes
+        state: present
+        reload: yes
+
+    - name: Install HAProxy (Centos)
+      yum: name=haproxy state=present
+      when: ansible_os_family == "RedHat"
+      tags: haproxy
+
+    - name: Install HAProxy (debian/ubuntu)
+      apt: name=haproxy state=latest
+      when: ansible_os_family == "Debian"
+      tags: haproxy
+
+    - name: Upload configuration HAProxy
+      template: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
+      tags: haproxy
+
+    - name: Start HAProxy
+      service: name=haproxy state=restarted
+      tags: haproxy

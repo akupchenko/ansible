@@ -1,0 +1,16 @@
+- hosts: all
+  remote_user: akupchenko
+  become: yes
+  tasks:
+
+    - name: Install libsemanage-python (Centos)
+      yum: name=libsemanage-python state=present
+      when: ansible_os_family == "RedHat"
+      tags: libsemanage-python
+
+    - name: Set haproxy_connect_any flag on and keep it persistent across reboots
+      when: ansible_os_family == "RedHat"
+      seboolean:
+        name: haproxy_connect_any
+        state: yes
+        persistent: yes
