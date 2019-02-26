@@ -1,0 +1,29 @@
+global_defs {
+   router_id LVS_DEVEL
+   vrrp_skip_check_adv_addr
+   vrrp_strict
+   vrrp_garp_interval 0
+   vrrp_gna_interval 0
+}
+
+{% for backend in groups['test'] %}
+vrrp_instance VI_{{ hostvars[backend]['keepalived_master_vi'] }} {
+{% if hostvars[backend]['keepalived_master_vi'] == keepalived_master_vi %}
+    state MASTER
+  {% else %}
+    state BACKUP
+  {% endif %}
+    interface {{ ansible_default_ipv4.interface }}
+    virtual_router_id 5{{ hostvars[backend]['keepalived_master_vi'] }}
+    priority {{ 900-(hostvars[backend]['keepalived_master_vi']|int)-(keepalived_master_vi|int) }}
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 123123123
+    }
+    virtual_ipaddress {
+        {{ hostvars[backend]['keepalived_master_ip'] }} dev {{ ansible_default_ipv4.interface }}
+    }
+}
+
+{% endfor %}

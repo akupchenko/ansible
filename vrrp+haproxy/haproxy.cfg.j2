@@ -14,5 +14,5 @@ frontend sshd
 backend ssh
        mode tcp
   {% for backend in groups['test'] %}
-       server {{ hostvars[backend]['ansible_hostname'] }} {{ hostvars[backend]['ansible_ssh_host'] }}:22
+       server {{ hostvars[backend]['ansible_hostname'] }} {{ hostvars[backend]['ansible_ssh_host'] }}:22 check
   {% endfor %}
